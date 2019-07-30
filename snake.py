@@ -3,7 +3,6 @@ import pygame
 from pygame.locals import *
 
 
-
 #use a list of (x,y) to represent snake
 class snake():
   __facing_options=[(1,0),(-1,0),(0,1),(0,-1)]
