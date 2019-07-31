@@ -1,5 +1,6 @@
 import random
 import pygame
+#import cv2
 from pygame.locals import *
 
 
@@ -50,7 +51,7 @@ class snake():
     self.move_snake()
 
   def move_snake(self):
-    '''add new cube in the direction the snake is facing, and chop off the tail'''
+    '''add new cube in the direction the snake is facing, and chop off the tail(keep tail if got_apple)'''
     if self.got_apple:
       self.snake_list.insert(0,((self.snake_list[0][0]+int(self.facing[0]))%20,(self.snake_list[0][1]+int(self.facing[1]))%20))
       self.got_apple = False
@@ -90,14 +91,15 @@ def detect_collision(apple_object,snake_object):
 
 def draw_grid(w, rows, surface):
   '''draw grid for game window'''
-  sizeBtwn = w // rows
-  x = 0
-  y = 0
-  for l in range(rows):
-    x = x + sizeBtwn
-    y = y + sizeBtwn
-    pygame.draw.line(surface, (255,255,255), (x,0),(x,w))
-    pygame.draw.line(surface, (255,255,255), (0,y),(w,y))
+  pass
+  # sizeBtwn = w // rows
+  # x = 0
+  # y = 0
+  # for l in range(rows):
+  #   x = x + sizeBtwn
+  #   y = y + sizeBtwn
+  #   pygame.draw.line(surface, (255,255,255), (x,0),(x,w))
+  #   pygame.draw.line(surface, (255,255,255), (0,y),(w,y))
 
 def draw_snake_apple(surface,snake_object,apple_object,dimension,rows):
   '''draw snake and apple on game window'''
@@ -112,9 +114,11 @@ def draw_all(surface,snake_object,apple_object,dimension,rows):
   surface.fill((0,0,0))
   draw_snake_apple(surface,snake_object,apple_object,dimension,rows)
   draw_grid(dimension,rows,surface)
+  pygame.display.set_caption(str(len(snake_object.snake_list)))
+
 
 def main():
-  GAME_GRID_DIMENSION = 500
+  GAME_GRID_DIMENSION = 200
   GAME_GRID_ROWS = 20
   #create game window
   game_window = pygame.display.set_mode((GAME_GRID_DIMENSION, GAME_GRID_DIMENSION))
@@ -123,14 +127,24 @@ def main():
   a = apple(GAME_GRID_ROWS,GAME_GRID_ROWS,s)
   #clock
   clock = pygame.time.Clock()
+
+  def get_env():
+    '''return env,facing,reward'''
+    data = list(pygame.image.tostring(game_window, 'RGB'))
+    return data,s.facing,len(s.snake_list)
+
   while True:
     pygame.time.delay(50)
     clock.tick(10)
-    print(s.snake_list)
+    #print(s.snake_list)
 
     s.apply_action()
     score = detect_collision(a,s)
-    
+
+    #data = get_env()
+    #print(len(data[0]))
+    #x=input()
+
     #terminate condition
     if score:
       print("Score: " + str(score))
@@ -143,6 +157,6 @@ def main():
 
 
 
-if __name__ == "__main__":
-  main()
+#if __name__ == "__main__":
+main()
   
