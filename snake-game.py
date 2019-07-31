@@ -117,7 +117,7 @@ def draw_all(surface,snake_object,apple_object,dimension,rows):
   pygame.display.set_caption(str(len(snake_object.snake_list)))
 
 
-def main():
+def snake_game():
   GAME_GRID_DIMENSION = 200
   GAME_GRID_ROWS = 20
   #create game window
@@ -158,5 +158,5 @@ def main():
 
 
 #if __name__ == "__main__":
-main()
+#main()
   
