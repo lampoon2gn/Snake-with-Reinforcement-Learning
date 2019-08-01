@@ -6,6 +6,7 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
+import time
 
 from snake_game import *
 
@@ -60,7 +61,7 @@ class DQN:
 
 
 def snake_agent():
-  gam = game()
+  env = game()
   #solver = DQN(12000)
   prev_reward = 0
 
@@ -68,8 +69,15 @@ def snake_agent():
   while True:
     run += 1
     while True:
-      gam.run_game()
-      data,facing,reward = gam.get_env()
+      env.run_game()
+      state = data1,facing,reward = env.get_env()
+      print("run_1: face: {} reward:{} position:{}".format(str(facing),str(reward),str(env.s.snake_list[0])))
+      env.run_game(1)
+      next_state = data2,facing,reward = env.get_env()
+      print("run_2: face: {} reward:{} position:{}".format(str(facing),str(reward),str(env.s.snake_list[0])))
+
+      time.sleep(100)
+
       if prev_reward > reward:
         reward = -prev_reward
         x=input()

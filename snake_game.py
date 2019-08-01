@@ -132,25 +132,28 @@ class game():
 
 
   def get_env(self):
-    '''return env,facing,reward'''
+    '''return list(image),facing,reward'''
     data = list(pygame.image.tostring(self.game_window, 'RGB'))
     return data,self.s.facing,len(self.s.snake_list)+1
 
-  def run_game(self):
+  def run_game(self,*args):
     '''run snake game for one frame if imported. Uncomment "while True:" and "self.clock.tick(10)" to play the game'''
-    while True:
-      pygame.time.delay(200)
-      self.clock.tick(10)
+    #while True:
+    pygame.time.delay(200)
+    #self.clock.tick(10)
+    if args:
+      self.s.apply_action(args[0])
+    else:
       self.s.apply_action()
-      score = detect_collision(self.a,self.s)
-      #terminate condition
-      if score:
-        #print("Score: " + str(score))
-        self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
+    score = detect_collision(self.a,self.s)
+    #terminate condition
+    if score:
+      #print("Score: " + str(score))
+      self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
 
-      draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
-    
-      pygame.display.update()
+    draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
+  
+    pygame.display.update()
 
 
 
