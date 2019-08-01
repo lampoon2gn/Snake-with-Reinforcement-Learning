@@ -137,19 +137,19 @@ class game():
     return data,self.s.facing,len(self.s.snake_list)+1
 
   def run_game(self):
-    while True:
-      pygame.time.delay(50)
-      self.clock.tick(10)
-      self.s.apply_action()
-      score = detect_collision(self.a,self.s)
-      #terminate condition
-      if score:
-        print("Score: " + str(score)+1)
-        self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
+    #while True:
+    pygame.time.delay(200)
+    #self.clock.tick(10)
+    self.s.apply_action()
+    score = detect_collision(self.a,self.s)
+    #terminate condition
+    if score:
+      #print("Score: " + str(score))
+      self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
 
-      draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
-    
-      pygame.display.update()
+    draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
+  
+    pygame.display.update()
 
 
 
