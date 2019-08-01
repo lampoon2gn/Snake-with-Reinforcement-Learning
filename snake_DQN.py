@@ -31,7 +31,7 @@ class DQN:
     self.model.add(Dense(24, input_shape=(input_dimension,), activation="relu"))
     self.model.add(Dense(24, activation="relu"))
     self.model.add(Dense(24, activation="relu"))
-    self.model.add(Dense(self.action_space, activation="linear"))
+    self.model.add(Dense(3, activation="linear"))
     self.model.compile(loss="mse", optimizer=Adam(lr=learning_rate))
 
   def remember(self,state,action,reward,next_state,done):

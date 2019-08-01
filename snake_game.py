@@ -65,7 +65,7 @@ class snake():
 class apple():
   def __init__(self,x_range,y_range,snake_object):
     while True:
-      (x,y) = (random.randint(0,x_range),random.randint(0,y_range))
+      (x,y) = (random.randint(0,x_range-1),random.randint(0,y_range-1))
       if (x,y) not in snake_object.snake_list:
         break
     self.position = (x,y)
@@ -137,19 +137,20 @@ class game():
     return data,self.s.facing,len(self.s.snake_list)+1
 
   def run_game(self):
-    #while True:
-    pygame.time.delay(200)
-    #self.clock.tick(10)
-    self.s.apply_action()
-    score = detect_collision(self.a,self.s)
-    #terminate condition
-    if score:
-      #print("Score: " + str(score))
-      self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
+    '''run snake game for one frame if imported. Uncomment "while True:" and "self.clock.tick(10)" to play the game'''
+    while True:
+      pygame.time.delay(200)
+      self.clock.tick(10)
+      self.s.apply_action()
+      score = detect_collision(self.a,self.s)
+      #terminate condition
+      if score:
+        #print("Score: " + str(score))
+        self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
 
-    draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
-  
-    pygame.display.update()
+      draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
+    
+      pygame.display.update()
 
 
 
