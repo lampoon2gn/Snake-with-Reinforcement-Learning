@@ -117,46 +117,44 @@ def draw_all(surface,snake_object,apple_object,dimension,rows):
   pygame.display.set_caption(str(len(snake_object.snake_list)))
 
 
-def run_game():
+class game():
   GAME_GRID_DIMENSION = 200
   GAME_GRID_ROWS = 20
-  #create game window
-  game_window = pygame.display.set_mode((GAME_GRID_DIMENSION, GAME_GRID_DIMENSION))
-  #create snake and apple
-  s = snake(GAME_GRID_ROWS,GAME_GRID_ROWS)
-  a = apple(GAME_GRID_ROWS,GAME_GRID_ROWS,s)
-  #clock
-  clock = pygame.time.Clock()
+  
+  def __init__(self):
+    #create game window
+    self.game_window = pygame.display.set_mode((self.GAME_GRID_DIMENSION, self.GAME_GRID_DIMENSION))
+    #create snake and apple
+    self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
+    self.a = apple(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS,self.s)
+    #clock
+    self.clock = pygame.time.Clock()
 
-  def get_env():
+
+  def get_env(self):
     '''return env,facing,reward'''
-    data = list(pygame.image.tostring(game_window, 'RGB'))
-    return data,s.facing,len(s.snake_list)
+    data = list(pygame.image.tostring(self.game_window, 'RGB'))
+    return data,self.s.facing,len(self.s.snake_list)+1
 
-  while True:
-    pygame.time.delay(50)
-    clock.tick(10)
-    #print(s.snake_list)
+  def run_game(self):
+    while True:
+      pygame.time.delay(50)
+      self.clock.tick(10)
+      self.s.apply_action()
+      score = detect_collision(self.a,self.s)
+      #terminate condition
+      if score:
+        print("Score: " + str(score)+1)
+        self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
 
-    s.apply_action()
-    score = detect_collision(a,s)
-
-    #data = get_env()
-    #print(len(data[0]))
-    #x=input()
-
-    #terminate condition
-    if score:
-      print("Score: " + str(score))
-      s = snake(GAME_GRID_ROWS,GAME_GRID_ROWS)
-
-    draw_all(game_window,s,a,GAME_GRID_DIMENSION,GAME_GRID_ROWS)
+      draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
     
-    pygame.display.update()
+      pygame.display.update()
 
 
 
 
-#if __name__ == "__main__":
-#main()
+if __name__ == "__main__":
+  gam = game()
+  gam.run_game()
   
