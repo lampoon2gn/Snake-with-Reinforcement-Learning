@@ -1,8 +1,9 @@
 import random
 import pygame
-#import cv2
+import numpy as np
+import time
 from pygame.locals import *
-
+import cv2
 
 #use a list of (x,y) to represent snake
 class snake():
@@ -13,6 +14,7 @@ class snake():
     ran = random.randint(0, 3)#(1,0) means facing +x direction
     self.facing = self.__facing_options[ran] #initialize random facing
     self.got_apple = False
+    self.num_of_moves = 0
 
   def apply_action(self,*args):
     '''find out what direction the snake will be facing after the action and move snake once'''
@@ -30,9 +32,13 @@ class snake():
         else:
           self.facing = self.facing[::-1]
           self.facing = (-self.facing[0],self.facing[1])
+      elif args[0] == 2: #keep moving
+        pass
     else:
       for event in pygame.event.get():
         #keys = pygame.key.get_pressed()
+        if event.type == pygame.QUIT:
+          pygame.quit()
         if event.type == KEYDOWN:
           if event.key == pygame.K_RIGHT:#keys[pygame.K_LEFT]:
             if self.facing[0] == 0: #originally moving in +/-y direction  
@@ -53,11 +59,12 @@ class snake():
   def move_snake(self):
     '''add new cube in the direction the snake is facing, and chop off the tail(keep tail if got_apple)'''
     if self.got_apple:
-      self.snake_list.insert(0,((self.snake_list[0][0]+int(self.facing[0]))%20,(self.snake_list[0][1]+int(self.facing[1]))%20))
+      self.snake_list.insert(0,((self.snake_list[0][0]+int(self.facing[0]))%10,(self.snake_list[0][1]+int(self.facing[1]))%10))
       self.got_apple = False
     else:
-      self.snake_list.insert(0,((self.snake_list[0][0]+int(self.facing[0]))%20,(self.snake_list[0][1]+int(self.facing[1]))%20))
+      self.snake_list.insert(0,((self.snake_list[0][0]+int(self.facing[0]))%10,(self.snake_list[0][1]+int(self.facing[1]))%10))
       del self.snake_list[-1]
+    self.num_of_moves +=1
 
 
 
@@ -65,7 +72,7 @@ class snake():
 class apple():
   def __init__(self,x_range,y_range,snake_object):
     while True:
-      (x,y) = (random.randint(0,x_range-1),random.randint(0,y_range-1))
+      (x,y) = (random.randint(0,x_range) %10,random.randint(0,y_range-1)%10)
       if (x,y) not in snake_object.snake_list:
         break
     self.position = (x,y)
@@ -87,10 +94,11 @@ def detect_collision(apple_object,snake_object):
   if apple_object.position in snake_object.snake_list:
     '''got an apple, keep tail next time snake moves,and generate new apple'''
     snake_object.got_apple = True
-    apple_object.change_apple_position(19,19,snake_object)
+    #todo: change the hard coded 19,19 to number of rows
+    apple_object.change_apple_position(9,9,snake_object)
 
 def draw_grid(w, rows, surface):
-  '''draw grid for game window'''
+  '''draw grid for game window, takes in width, rows, surface(pygame object)'''
   pass
   # sizeBtwn = w // rows
   # x = 0
@@ -118,29 +126,46 @@ def draw_all(surface,snake_object,apple_object,dimension,rows):
 
 
 class game():
-  GAME_GRID_DIMENSION = 200
-  GAME_GRID_ROWS = 20
+  '''snake game'''
+  GAME_GRID_DIMENSION = 100
+  GAME_GRID_ROWS = 10
   
   def __init__(self):
     #create game window
     self.game_window = pygame.display.set_mode((self.GAME_GRID_DIMENSION, self.GAME_GRID_DIMENSION))
+    #self.game_window = pygame.display.set_mode((500, 500),flags = 'SCALED')
+
     #create snake and apple
     self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
     self.a = apple(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS,self.s)
     #clock
     self.clock = pygame.time.Clock()
+    #terminal state
+    self.terminal = False
+    self.reward = 0
 
+  def bytearray_to_rgb(self,data):
+    r=[]
+    g=[]
+    b=[]
+    for i in range(100):
+      #r.append(data[300*i:300*(i+1):3])
+      g.append(data[300*i+1:300*(i+1)+1:3])
+      #b.append(data[300*i+2:300*(i+1)+2:3])
+    return np.array(g).reshape(1,100,100)
 
   def get_env(self):
-    '''return list(image),facing,reward'''
-    data = list(pygame.image.tostring(self.game_window, 'RGB'))
-    return data,self.s.facing,len(self.s.snake_list)+1
+    '''return list(image),facing,reward,terminal'''
+    data = np.asarray(list(pygame.image.tostring(self.game_window, 'RGB')))
+    data = self.bytearray_to_rgb(data)
+    return data,self.s.facing,len(self.s.snake_list)-1-self.s.num_of_moves*0.01,self.terminal
 
   def run_game(self,*args):
     '''run snake game for one frame if imported. Uncomment "while True:" and "self.clock.tick(10)" to play the game'''
     #while True:
-    pygame.time.delay(200)
-    #self.clock.tick(10)
+      #pygame.time.delay(50)
+      #self.clock.tick(10)
+    self.terminal = False
     if args:
       self.s.apply_action(args[0])
     else:
@@ -150,9 +175,10 @@ class game():
     if score:
       #print("Score: " + str(score))
       self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
+      self.terminal = True
+      score = 0
 
     draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
-  
     pygame.display.update()
 
 
