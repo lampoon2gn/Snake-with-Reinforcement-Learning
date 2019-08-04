@@ -99,7 +99,6 @@ def detect_collision(apple_object,snake_object):
 
 def draw_all(surface,snake_object,apple_object,dimension,rows):
   '''draw snake and apple on game window'''
-  dis = dimension // rows
   #draw apple
   surface[apple_object.position[1]][apple_object.position[0]] = .5
   #draw snake
@@ -132,7 +131,7 @@ class game():
     return data,self.s.facing,len(self.s.snake_list)-1-self.s.num_of_moves*0.01,self.terminal
 
   def run_game(self,*args):
-    '''run snake game for one frame if imported. Uncomment "while True:" and "self.clock.tick(10)" to play the game'''
+    '''run snake game for one frame.'''
     while True:
       self.game_window = np.zeros((self.GAME_GRID_ROWS,self.GAME_GRID_ROWS))
       time.sleep(1)
