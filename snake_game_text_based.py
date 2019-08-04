@@ -1,10 +1,7 @@
 import random
-import pygame
 import numpy as np
 import time
-from pygame.locals import *
 import keyboard as kbd
-import cv2
 import os
 
 
