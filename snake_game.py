@@ -158,13 +158,14 @@ class game():
     '''return list(image),facing,reward,terminal'''
     data = np.asarray(list(pygame.image.tostring(self.game_window, 'RGB')))
     data = self.bytearray_to_rgb(data)
-    return data,self.s.facing,len(self.s.snake_list)-1-self.s.num_of_moves*0.01,self.terminal
+    return data,self.s.facing,len(self.s.snake_list)-1-self.s.num_of_moves*0.001,self.terminal
 
   def run_game(self,*args):
     '''run snake game for one frame if imported. Uncomment "while True:" and "self.clock.tick(10)" to play the game'''
     #while True:
       #pygame.time.delay(50)
       #self.clock.tick(10)
+    score = 0
     self.terminal = False
     if args:
       self.s.apply_action(args[0])
@@ -176,7 +177,7 @@ class game():
       #print("Score: " + str(score))
       self.s = snake(self.GAME_GRID_ROWS,self.GAME_GRID_ROWS)
       self.terminal = True
-      score = 0
+
 
     draw_all(self.game_window,self.s,self.a,self.GAME_GRID_DIMENSION,self.GAME_GRID_ROWS)
     pygame.display.update()
